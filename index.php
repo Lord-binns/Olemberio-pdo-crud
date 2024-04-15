@@ -43,10 +43,10 @@
                             echo '<table class="table table-bordered table-striped">';
                                 echo "<thead>";
                                     echo "<tr>";
-                                        echo "<th>#</th>";
-                                        echo "<th>Name</th>";
-                                        echo "<th>Address</th>";
-                                        echo "<th>Salary</th>";
+                                        echo "<th>Product_id</th>";
+                                        echo "<th>Product_Name</th>";
+                                        echo "<th>Product_Description</th>";
+                                        echo "<th>Product_Retail_Price</th>";
                                         echo "<th>Action</th>";
                                     echo "</tr>";
                                 echo "</thead>";
