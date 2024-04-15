@@ -42,7 +42,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
     // Check input errors before inserting in database
     if(empty($name_err) && empty($address_err) && empty($salary_err)){
         // Prepare an update statement
-        $sql = "UPDATE employees SET name=:name, address=:address, salary=:salary WHERE id=:id";
+        $sql = "UPDATE products SET name=:name, address=:address, salary=:salary WHERE id=:id";
  
         if($stmt = $pdo->prepare($sql)){
             // Bind variables to the prepared statement as parameters
