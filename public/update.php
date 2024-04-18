@@ -9,7 +9,7 @@ $product_name_err = $product_description_err = $product_retail_price_err = "";
 // Processing form data when form is submitted
 if(isset($_POST["product_id"]) && !empty($_POST["product_id"])){
     // Get hidden input value
-    $id = $_POST["product_id"];
+    $product_id = $_POST["product_id"];
     
     // Validate name
     $input_product_name = trim($_POST["product_name"]);
@@ -21,18 +21,18 @@ if(isset($_POST["product_id"]) && !empty($_POST["product_id"])){
         $product_name = $input_product_name;
     }
     
-    // Validate address address
+    // Validate product details
     $input_product_description = trim($_POST["product_description"]);
     if(empty($input_product_description)){
-        $product_description_err = "Please enter an address.";     
+        $aproduct_description_err = "Please enter product details.";     
     } else{
         $product_description = $input_product_description;
     }
     
-    // Validate salary
+    // Validate product retail price
     $input_product_retail_price = trim($_POST["product_retail_price"]);
     if(empty($input_product_retail_price)){
-        $product_retail_price_err = "Please enter the product_retail_price.";     
+        $product_retail_price_err = "Please enter the retail price amount.";     
     } elseif(!ctype_digit($input_product_retail_price)){
         $product_retail_price_err = "Please enter a positive integer value.";
     } else{
@@ -142,30 +142,61 @@ if(isset($_POST["product_id"]) && !empty($_POST["product_id"])){
             <div class="row">
                 <div class="col-md-12">
                     <h2 class="mt-5">Update Record</h2>
-                    <p>Please edit the input values and submit to update the employee record.</p>
+                    <p>Please edit the input values and submit to update the product record.</p>
                     <form action="<?php echo htmlspecialchars(basename($_SERVER['REQUEST_URI'])); ?>" method="post">
                         <div class="form-group">
-                            <label>Product_Name</label>
+                            <label>Name</label>
                             <input type="text" name="product_name" class="form-control <?php echo (!empty($product_name_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $product_name; ?>">
                             <span class="invalid-feedback"><?php echo $product_name_err;?></span>
                         </div>
                         <div class="form-group">
-                            <label>Product_Description</label>
+                            <label>Product Details</label>
                             <textarea name="product_description" class="form-control <?php echo (!empty($product_description_err)) ? 'is-invalid' : ''; ?>"><?php echo $product_description; ?></textarea>
                             <span class="invalid-feedback"><?php echo $product_description_err;?></span>
                         </div>
                         <div class="form-group">
-                            <label>Product_Retail_Price</label>
+                            <label>Product Retail Price</label>
                             <input type="text" name="product_retail_price" class="form-control <?php echo (!empty($product_retail_price_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $product_retail_price; ?>">
                             <span class="invalid-feedback"><?php echo $product_retail_price_err;?></span>
                         </div>
+                        
+                        <!--Initialize product id-->
                         <input type="hidden" name="product_id" value="<?php echo $product_id; ?>"/>
-                        <input type="submit" class="btn btn-primary" value="Submit">
+                        
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#saveUpdateChangesModal">
+                            Save Changes
+                        </button>
+                        
+                        <!-- Modal -->
+                        <div class="modal fade" id="saveUpdateChangesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Save changes?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <input type="submit" class="btn btn-primary" value="Submit">
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+
                         <a href="../index.php" class="btn btn-secondary ml-2">Cancel</a>
                     </form>
                 </div>
             </div>        
         </div>
     </div>
+
+<!--Additional Bootstrap Dependancies-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
