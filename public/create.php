@@ -9,9 +9,9 @@ $product_name_err = $product_description_err = $product_retail_price_err = "";
 // Processing form data when form is submitted
 if($_SERVER["REQUEST_METHOD"] == "POST"){
     // Validate name
-    $input_name = trim($_POST["product_name"]);
+    $input_product_name = trim($_POST["product_name"]);
     if(empty($input_product_name)){
-        $name_err = "Please enter a product_name.";
+        $product_name_err = "Please enter a product_name.";
     } elseif(!filter_var($input_product_name, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z\s]+$/")))){
         $product_name_err = "Please enter a valid product_name.";
     } else{
@@ -43,13 +43,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
  
         if($stmt = $pdo->prepare($sql)){
             // Bind variables to the prepared statement as parameters
-            $stmt->bindParam(":product_name", $param_name);
-            $stmt->bindParam(":product_description", $param_address);
-            $stmt->bindParam(":product_retail_price", $param_salary);
+            $stmt->bindParam(":product_name", $param_product_name);
+            $stmt->bindParam(":product_description", $param_product_description);
+            $stmt->bindParam(":product_retail_price", $param_product_retail_price);
             
             // Set parameters
-            $param_name = $product_name;
-            $param_address = $product_descrciption;
+            $param_product_name = $product_name;
+            $param_product_description = $product_description;
             $param_product_retail_price = $product_retail_price;
             
             // Attempt to execute the prepared statement
@@ -93,7 +93,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     <p>Please fill this form and submit to add a Product record to the database.</p>
                     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                         <div class="form-group">
-                            <label>ProductName</label>
+                            <label>Product_Name</label>
                             <input type="text" name="product_name" class="form-control <?php echo (!empty($product_name_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $product_name; ?>">
                             <span class="invalid-feedback"><?php echo $product_name_err;?></span>
                         </div>

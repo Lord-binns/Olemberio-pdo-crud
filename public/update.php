@@ -42,7 +42,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
     // Check input errors before inserting in database
     if(empty($product_name_err) && empty($product_description_err) && empty($product_retail_price_err)){
         // Prepare an update statement
-        $sql = "UPDATE products SET product_name=:product_name, product_decsription=:product_description, product_retail_price=:product_retail_price WHERE product_id=:product_id";
+        $sql = "UPDATE products SET product_name=:product_name, product_description=:product_description, product_retail_price=:product_retail_price WHERE product_id=:product_id";
  
         if($stmt = $pdo->prepare($sql)){
             // Bind variables to the prepared statement as parameters
