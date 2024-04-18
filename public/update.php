@@ -1,15 +1,15 @@
 <?php
 // Include config file
-require_once "config.php";
+require_once "../db/config.php";
  
 // Define variables and initialize with empty values
 $product_name = $product_description = $product_retail_price = "";
 $product_name_err = $product_description_err = $product_retail_price_err = "";
  
 // Processing form data when form is submitted
-if(isset($_POST["id"]) && !empty($_POST["id"])){
+if(isset($_POST["product_id"]) && !empty($_POST["product_id"])){
     // Get hidden input value
-    $id = $_POST["id"];
+    $id = $_POST["product_id"];
     
     // Validate name
     $input_product_name = trim($_POST["product_name"]);
@@ -23,7 +23,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
     
     // Validate address address
     $input_product_description = trim($_POST["product_description"]);
-    if(empty($input_address)){
+    if(empty($input_product_description)){
         $product_description_err = "Please enter an address.";     
     } else{
         $product_description = $input_product_description;
@@ -60,7 +60,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
             // Attempt to execute the prepared statement
             if($stmt->execute()){
                 // Records updated successfully. Redirect to landing page
-                header("location: index.php");
+                header("location: ../index.php");
                 exit();
             } else{
                 echo "Oops! Something went wrong. Please try again later.";
@@ -101,7 +101,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                     $product_retail_price = $row["product_retail_price"];
                 } else{
                     // URL doesn't contain valid id. Redirect to error page
-                    header("location: error.php");
+                    header("location: ../public/error.php");
                     exit();
                 }
                 
@@ -117,7 +117,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
         unset($pdo);
     }  else{
         // URL doesn't contain id parameter. Redirect to error page
-        header("location: error.php");
+        header("location: ../public/error.php");
         exit();
     }
 }
@@ -152,7 +152,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                         <div class="form-group">
                             <label>Product_Description</label>
                             <textarea name="product_description" class="form-control <?php echo (!empty($product_description_err)) ? 'is-invalid' : ''; ?>"><?php echo $product_description; ?></textarea>
-                            <span class="invalid-feedback"><?php echo $address_err;?></span>
+                            <span class="invalid-feedback"><?php echo $product_description_err;?></span>
                         </div>
                         <div class="form-group">
                             <label>Product_Retail_Price</label>
@@ -161,7 +161,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                         </div>
                         <input type="hidden" name="product_id" value="<?php echo $product_id; ?>"/>
                         <input type="submit" class="btn btn-primary" value="Submit">
-                        <a href="index.php" class="btn btn-secondary ml-2">Cancel</a>
+                        <a href="../index.php" class="btn btn-secondary ml-2">Cancel</a>
                     </form>
                 </div>
             </div>        
