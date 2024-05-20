@@ -49,7 +49,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
      <!--<a href="reset-password.php" class="btn btn-warning">Reset Your Password</a>-->
-        <a href="../public/user/logout.php" class="btn btn-danger ml-3">Sign Out of Your Account</a>
+        <a href="../../user/logout.php" class="btn btn-danger ml-3">Sign Out of Your Account</a>
     </form>
   </div>
 </nav>
