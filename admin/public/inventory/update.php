@@ -1,133 +1,145 @@
 <?php
 // Include config file
-require_once "../db/config.php";
+require_once   "../../db/config.php";
  
 // Define variables and initialize with empty values
-$product_name = $product_description = $product_retail_price = "";
-$product_name_err = $product_description_err = $product_retail_price_err = "";
+$title = $description = $price = $rrp = $quantity = $img = "";
+$title_err = $description_err = $price_err = $rrp_err = $quantity_err = $img_err = "";
+   // Prepare a select statement
+   $sql = "SELECT * FROM products WHERE id = :id";
+    
+   if($stmt = $pdo->prepare($sql)){
+       // Bind variables to the prepared statement as parameters
+       $stmt->bindParam(":id", $param_id);
+       
+       // Set parameters
+       $param_id = trim($_GET["id"]);
+       
+       // Attempt to execute the prepared statement
+       if($stmt->execute()){
+           if($stmt->rowCount() == 1){
+               /* Fetch result row as an associative array. Since the result set
+               contains only one row, we don't need to use while loop */
+               $row = $stmt->fetch(PDO::FETCH_ASSOC);
+           
+               // Retrieve individual field values
+               $title = $row["title"];
+               $description = $row["description"];
+               $price = $row["price"];
+               $rrp = $row["rrp"];
+               $quantity = $row["quantity"];
+               $img = $row["img"];
+           } else{
+               // Product ID not found, redirect to error page
+               header("location: ../public/error.php");
+               exit();
+           }
+       } else{
+           echo "Oops! Something went wrong. Please try again later.";
+       }
+   }
+   
  
 // Processing form data when form is submitted
-if(isset($_POST["product_id"]) && !empty($_POST["product_id"])){
-    // Get hidden input value
-    $product_id = $_POST["product_id"];
-    
-    // Validate name
-    $input_product_name = trim($_POST["product_name"]);
-    if(empty($input_product_name)){
-        $product_name_err = "Please enter a name.";
-    } elseif(!filter_var($input_product_name, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[a-zA-Z\s]+$/")))){
-        $product_name_err = "Please enter a valid name.";
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+    // Validate title
+    $input_title = trim($_POST["title"]);
+    if(empty($input_title)){
+        $title_err = "Please enter a title.";
     } else{
-        $product_name = $input_product_name;
+        $title = $input_title;
     }
     
-    // Validate product details
-    $input_product_description = trim($_POST["product_description"]);
-    if(empty($input_product_description)){
-        $aproduct_description_err = "Please enter product details.";     
+    // Validate description
+    $input_description = trim($_POST["description"]);
+    if(empty($input_description)){
+        $description_err = "Please enter a description.";     
     } else{
-        $product_description = $input_product_description;
+        $description = $input_description;
     }
     
-    // Validate product retail price
-    $input_product_retail_price = trim($_POST["product_retail_price"]);
-    if(empty($input_product_retail_price)){
-        $product_retail_price_err = "Please enter the retail price amount.";     
-    } elseif(!ctype_digit($input_product_retail_price)){
-        $product_retail_price_err = "Please enter a positive integer value.";
+    // Validate price
+    $input_price = trim($_POST["price"]);
+    if(empty($input_price)){
+        $price_err = "Please enter the price amount.";     
+    } elseif(!ctype_digit($input_price)){
+        $price_err = "Please enter a positive integer value.";
     } else{
-        $product_retail_price = $input_product_retail_price;
+        $price = $input_price;
+    }
+
+    // Validate rrp
+    $input_rrp = trim($_POST["rrp"]);
+    if(empty($input_rrp)){
+        $rrp_err = "Please enter the RRP amount.";     
+    } elseif(!ctype_digit($input_rrp)){
+        $rrp_err = "Please enter a positive integer value.";
+    } else{
+        $rrp = $input_rrp;
     }
     
-    // Check input errors before inserting in database
-    if(empty($product_name_err) && empty($product_description_err) && empty($product_retail_price_err)){
-        // Prepare an update statement
-        $sql = "UPDATE products SET product_name=:product_name, product_description=:product_description, product_retail_price=:product_retail_price WHERE product_id=:product_id";
- 
-        if($stmt = $pdo->prepare($sql)){
-            // Bind variables to the prepared statement as parameters
-            $stmt->bindParam(":product_name", $param_product_name);
-            $stmt->bindParam(":product_description", $param_product_description);
-            $stmt->bindParam(":product_retail_price", $param_product_retail_price);
-            $stmt->bindParam(":product_id", $param_product_id);
-            
-            // Set parameters
-            $param_product_name = $product_name;
-            $param_product_description = $product_description;
-            $param_product_retail_price = $product_retail_price;
-            $param_product_id = $product_id;
-            
-            // Attempt to execute the prepared statement
-            if($stmt->execute()){
-                // Records updated successfully. Redirect to landing page
-                header("location: ../index.php");
-                exit();
-            } else{
-                echo "Oops! Something went wrong. Please try again later.";
-            }
+    // Validate quantity
+    $input_quantity = trim($_POST["quantity"]);
+    if(empty($input_quantity)){
+        $quantity_err = "Please enter the quantity.";     
+    } elseif(!ctype_digit($input_quantity)){
+        $quantity_err = "Please enter a positive integer value.";
+    } else{
+        $quantity = $input_quantity;
+    }
+    
+    // Validate image
+    $input_img = trim($_POST["img"]);
+    if(empty($input_img)){
+        $img_err = "Please enter the image URL.";     
+    } else{
+        $img = $input_img;
+    }
+    
+   // Check input errors before updating in database
+    if (empty($title_err) && empty($description_err) && empty($price_err) && empty($rrp_err) && empty($quantity_err) && empty($img_err)) {
+    // Prepare an update statement
+    $sql = "UPDATE products SET title = :title, description = :description, price = :price, rrp = :rrp, quantity = :quantity, img = :img WHERE id = :id";
+
+    if ($stmt = $pdo->prepare($sql)) {
+        // Bind variables to the prepared statement as parameters
+        $stmt->bindParam(":title", $title);
+        $stmt->bindParam(":description", $description);
+        $stmt->bindParam(":price", $price);
+        $stmt->bindParam(":rrp", $rrp);
+        $stmt->bindParam(":quantity", $quantity);
+        $stmt->bindParam(":img", $img);
+        $stmt->bindParam(":id", $id); // Add parameter for the product ID
+
+        // Set the product ID
+        $id = $_POST["id"]; // Assuming you have a hidden input field named "id" in your form
+
+        // Attempt to execute the prepared statement
+        if ($stmt->execute()) {
+            // Records updated successfully. Redirect to landing page
+            header("location: ../products.php");
+            exit();
+        } else {
+            echo "Oops! Something went wrong. Please try again later.";
         }
-         
-        // Close statement
-        unset($stmt);
     }
+
+    // Close statement
+    unset($stmt);
+    }
+
     
     // Close connection
     unset($pdo);
-} else{
-    // Check existence of id parameter before processing further
-    if(isset($_GET["product_id"]) && !empty(trim($_GET["product_id"]))){
-        // Get URL parameter
-        $product_id =  trim($_GET["product_id"]);
-        
-        // Prepare a select statement
-        $sql = "SELECT * FROM products WHERE product_id = :product_id";
-        if($stmt = $pdo->prepare($sql)){
-            // Bind variables to the prepared statement as parameters
-            $stmt->bindParam(":product_id", $param_product_id);
-            
-            // Set parameters
-            $param_product_id = $product_id;
-            
-            // Attempt to execute the prepared statement
-            if($stmt->execute()){
-                if($stmt->rowCount() == 1){
-                    /* Fetch result row as an associative array. Since the result set
-                    contains only one row, we don't need to use while loop */
-                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-                
-                    // Retrieve individual field value
-                    $product_name = $row["product_name"];
-                    $product_description = $row["product_description"];
-                    $product_retail_price = $row["product_retail_price"];
-                } else{
-                    // URL doesn't contain valid id. Redirect to error page
-                    header("location: ../public/error.php");
-                    exit();
-                }
-                
-            } else{
-                echo "Oops! Something went wrong. Please try again later.";
-            }
-        }
-        
-        // Close statement
-        unset($stmt);
-        
-        // Close connection
-        unset($pdo);
-    }  else{
-        // URL doesn't contain id parameter. Redirect to error page
-        header("location: ../public/error.php");
-        exit();
-    }
 }
+
 ?>
  
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Update Record</title>
+    <title>Create Record</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         .wrapper{
@@ -137,7 +149,7 @@ if(isset($_POST["product_id"]) && !empty($_POST["product_id"])){
     </style>
 </head>
 <body>
-    <div class="wrapper">
+<div class="wrapper">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
@@ -145,58 +157,42 @@ if(isset($_POST["product_id"]) && !empty($_POST["product_id"])){
                     <p>Please edit the input values and submit to update the product record.</p>
                     <form action="<?php echo htmlspecialchars(basename($_SERVER['REQUEST_URI'])); ?>" method="post">
                         <div class="form-group">
-                            <label>Name</label>
-                            <input type="text" name="product_name" class="form-control <?php echo (!empty($product_name_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $product_name; ?>">
-                            <span class="invalid-feedback"><?php echo $product_name_err;?></span>
+                            <label>Title</label>
+                            <input type="text" name="title" class="form-control <?php echo (!empty($title_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $title; ?>">
+                            <span class="invalid-feedback"><?php echo $title_err;?></span>
                         </div>
                         <div class="form-group">
-                            <label>Product Details</label>
-                            <textarea name="product_description" class="form-control <?php echo (!empty($product_description_err)) ? 'is-invalid' : ''; ?>"><?php echo $product_description; ?></textarea>
-                            <span class="invalid-feedback"><?php echo $product_description_err;?></span>
+                            <label>Description</label>
+                            <textarea name="description" class="form-control <?php echo (!empty($description_err)) ? 'is-invalid' : ''; ?>"><?php echo $description; ?></textarea>
+                            <span class="invalid-feedback"><?php echo $description_err;?></span>
                         </div>
                         <div class="form-group">
-                            <label>Product Retail Price</label>
-                            <input type="text" name="product_retail_price" class="form-control <?php echo (!empty($product_retail_price_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $product_retail_price; ?>">
-                            <span class="invalid-feedback"><?php echo $product_retail_price_err;?></span>
+                            <label>Price</label>
+                            <input type="text" name="price" class="form-control <?php echo (!empty($price_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $price; ?>">
+                            <span class="invalid-feedback"><?php echo $price_err;?></span>
                         </div>
-                        
-                        <!--Initialize product id-->
-                        <input type="hidden" name="product_id" value="<?php echo $product_id; ?>"/>
-                        
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#saveUpdateChangesModal">
-                            Save Changes
-                        </button>
-                        
-                        <!-- Modal -->
-                        <div class="modal fade" id="saveUpdateChangesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                Save changes?
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <input type="submit" class="btn btn-primary" value="Submit">
-                            </div>
-                            </div>
+                        <div class="form-group">
+                            <label>RRP</label>
+                            <input type="text" name="rrp" class="form-control <?php echo (!empty($rrp_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $rrp; ?>">
+                            <span class="invalid-feedback"><?php echo $rrp_err;?></span>
                         </div>
+                        <div class="form-group">
+                            <label>Quantity</label>
+                            <input type="text" name="quantity" class="form-control <?php echo (!empty($quantity_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $quantity; ?>">
+                            <span class="invalid-feedback"><?php echo $quantity_err;?></span>
                         </div>
-
-                        <a href="../index.php" class="btn btn-secondary ml-2">Cancel</a>
+                        <div class="form-group">
+                            <label>Image URL</label>
+                            <input type="text" name="img" class="form-control <?php echo (!empty($img_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $img; ?>">
+                            <span class="invalid-feedback"><?php echo $img_err;?></span>
+                        </div>
+                        <input type="hidden" name="id" value="<?php echo $_GET["id"]; ?>"/>
+                        <input type="submit" class="btn btn-primary" value="Submit">
+                        <a href="../products.php" class="btn btn-secondary ml-2">Cancel</a>
                     </form>
                 </div>
             </div>        
         </div>
-    </div>
-
-<!--Additional Bootstrap Dependancies-->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</div>
 </body>
 </html>
