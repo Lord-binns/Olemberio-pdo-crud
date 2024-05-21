@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 17, 2024 at 05:06 PM
+-- Generation Time: May 21, 2024 at 02:08 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -28,34 +28,26 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `products` (
-  `product_id` int(11) NOT NULL,
-  `product_thumbnail_link` varchar(255) DEFAULT NULL,
-  `product_name` varchar(255) NOT NULL,
-  `product_description` varchar(100) NOT NULL,
-  `product_retail_price` varchar(255) NOT NULL,
-  `product_date_added` date NOT NULL,
-  `product_updated_date` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `id` int(11) NOT NULL,
+  `title` varchar(200) NOT NULL,
+  `description` text NOT NULL,
+  `price` decimal(10,0) NOT NULL,
+  `rrp` decimal(10,0) NOT NULL DEFAULT 0,
+  `quantity` int(11) NOT NULL,
+  `img` text NOT NULL,
+  `date_added` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Dumping data for table `products`
 --
 
-INSERT INTO `products` (`product_id`, `product_thumbnail_link`, `product_name`, `product_description`, `product_retail_price`, `product_date_added`, `product_updated_date`) VALUES
-(1, NULL, 'magic', 'qwerty', '1', '0000-00-00', NULL),
-(2, NULL, 'Haas Claw', 'asasdd', '44', '0000-00-00', NULL),
-(4, NULL, 'tty', 'hgj', '7', '0000-00-00', NULL),
-(5, NULL, 'ff', 'gg', '4', '0000-00-00', NULL),
-(6, NULL, 'ff', 'kk', '9', '0000-00-00', NULL),
-(7, NULL, 'hh', '8', '9', '0000-00-00', NULL),
-(8, NULL, 'dd', '8', '1', '0000-00-00', NULL),
-(9, NULL, 'jj', '8', '1', '0000-00-00', NULL),
-(10, NULL, 'ff', '8', '1', '0000-00-00', NULL),
-(11, NULL, 'ff', '8', '1', '0000-00-00', NULL),
-(12, NULL, 'q', '8', '4', '0000-00-00', NULL),
-(13, NULL, 'u', '8', '6', '0000-00-00', NULL),
-(14, NULL, 'Y', '8', '1', '0000-00-00', NULL),
-(15, NULL, 'I', '8', '8', '0000-00-00', NULL);
+INSERT INTO `products` (`id`, `title`, `description`, `price`, `rrp`, `quantity`, `img`, `date_added`) VALUES
+(1, 'Elixir of Eternal Youth', 'A magical potion brewed from rare herbs and mystical ingredients that promises everlasting youth and vitality.', 1300, 1500, 10, 'https://imgs.search.brave.com/6Vi-BKNNCpIVJ2gSSiiK4jH9tiqjLLjx1hQgH650GgY/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pLmV0/c3lzdGF0aWMuY29t/LzQ0MDkyNzYyL3Iv/aWwvZGE4ZjA1LzUx/NDgyNjIxNjEvaWxf/NjAweDYwMC41MTQ4/MjYyMTYxX2l3YWEu/anBn', '2024-05-08 00:00:00'),
+(2, 'Phoenix Feather Wand', 'Crafted from the feather of a mythical phoenix, this wand channels powerful magical energies and is said to grant the user control over fire and resurrection.', 2800, 2000, 30, 'https://img.freepik.com/premium-photo/players-can-wield-power-phoenix-feather-wand-ai-generated-art_848850-1742.jpg', '2024-05-08 00:00:00'),
+(3, 'Dragon Scale Armor', 'Crafted from the impenetrable scales of a dragon, this armor provides exceptional protection against physical and magical attacks.', 1600, 1900, 40, 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/3d57ada8-f751-4596-8fed-58a9cf404347/dfw2bbs-55e6398f-c27d-4ea0-87ed-6c25ca3ee0ba.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzNkNTdhZGE4LWY3NTEtNDU5Ni04ZmVkLTU4YTljZjQwNDM0N1wvZGZ3MmJicy01NWU2Mzk4Zi1jMjdkLTRlYTAtODdlZC02YzI1Y2EzZWUwYmEuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.DJyo094rdy6eZv16BY586qOEwxPRXuEY7VX4m9lYjF4', '2024-05-08 00:00:00'),
+(4, 'Mermaid\'s Tear Necklace', 'A necklace made from the tears of mermaids, rumored to grant the wearer the ability to breathe underwater and communicate with sea creatures.', 1700, 1800, 60, 'https://images.pexels.com/photos/906056/pexels-photo-906056.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1', '2024-05-08 00:00:00'),
+(5, 'Griffin Claw Dagger', 'A dagger crafted from the claw of a griffin, known for its sharpness and the power to strike with the force of a thunderbolt.', 1000, 900, 20, 'https://pic.ebid.net/upload_big/1/5/1/uo_1703076903-10674-1.jpg', '2024-05-08 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -75,7 +67,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `created_at`) VALUES
-(23, 'admin', '$2y$10$54aZJptqRkPcVwo9CFTckOTRRJPfpF6x7vpSymcYGN2Yjd/JlK/8y', '2024-05-13 23:18:55');
+(1, 'admin', '$2y$10$kGp4g1TjBK4XwLIwRbBHSeZ4W5FpPbYoB1ap5NfFUjUPAcE3KR5QG', '2024-04-29 16:39:58'),
+(0, 'admin11', '$2y$10$Cxdi/T5.v2k1EZabtcxNI.U1e5qNQ8/Vj1HbxU5a9iNiWwAaDt6Ci', '2024-05-21 19:24:39'),
+(0, 'admin111', '$2y$10$z3ho3hjJqLdFl7KsL9RcWO4SEmlTI6OTkOvFlmnoPWitfVWQug.aS', '2024-05-21 19:26:09');
 
 --
 -- Indexes for dumped tables
@@ -85,14 +79,7 @@ INSERT INTO `users` (`id`, `username`, `password`, `created_at`) VALUES
 -- Indexes for table `products`
 --
 ALTER TABLE `products`
-  ADD PRIMARY KEY (`product_id`);
-
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -102,13 +89,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
-
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
