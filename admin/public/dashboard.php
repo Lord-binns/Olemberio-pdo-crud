@@ -16,20 +16,33 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     <title>Welcome</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <style>
-        body{ font: 14px sans-serif; }
+        body {
+            font: 14px sans-serif;
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .navbar {
+            margin-bottom: 20px;
+        }
         .wrapper{
             width: 600px;
             margin: 0 auto;
         }
-        table tr td:last-child{
-            width: 120px;
+        .card-header {
+            background-color: #17a2b8; /* Bootstrap's info color */
+            color: white;
+        }
+        .card-body {
+            background-color: #d1ecf1; /* Light blue background */
+        }
+        .card-text {
+            color: #007bff; /* Bootstrap's primary color */
         }
     </style>
 </head>
+<body>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -53,27 +66,25 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
     </form>
   </div>
 </nav>
-<body>
 
-<div class="container-fluid" >
+<div class="container">
     <div class="card text-white bg-info mb-3" style="max-width: 18rem;">
-        <div class="card-header" href="products.php">Products Recorded</div>
+        <div class="card-header">Products Recorded</div>
         <div class="card-body">
-            <h5 class="card-title "></h5>
-            
-            <?php
-            // Include config file
-            require_once "../db/config.php";
-            
-            // Attempt select query execution
-            $sql = "SELECT COUNT(*) AS total_products FROM products";
-            if($stmt = $pdo->prepare($sql)){
-                // Attempt to execute the prepared statement
-                if($stmt->execute()){
-                    // Bind result variables
-                    $stmt->bindColumn('total_products', $total_products);
-                    
-                    // Fetch result
+            <h1 class="text-center">
+                <?php
+                // Include config file
+                require_once "../db/config.php";
+                
+                // Attempt select query execution
+                $sql = "SELECT COUNT(*) AS total_products FROM products";
+                if($stmt = $pdo->prepare($sql)){
+                    // Attempt to execute the prepared statement
+                    if($stmt->execute()){
+                        // Bind result variables
+                        $stmt->bindColumn('total_products', $total_products);
+                        
+                        // Fetch result
                     if($stmt->fetch()){
                         echo '<h1 class="text-center">' . $total_products . '</h1><br>';
                     } else{
@@ -82,14 +93,15 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                 } else{
                     echo "Oops! Something went wrong. Please try again later.";
                 }
-            }
-            // Close statement
-            unset($stmt);
-            ?>
-            
+                }
+                // Close statement
+                unset($stmt);
+                ?>
+            </h1>
             <p class="card-text">Date and Time: <?php echo date("Y-m-d H:i:s"); ?></p>
         </div>
     </div>
 </div>
+
 </body>
 </html>
