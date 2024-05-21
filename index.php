@@ -143,9 +143,9 @@
         }
 
         function purchase(productId) {
-            alert(`Product with ID ${productId} purchased!`);
-        }
-
+    // Redirect to the purchase page, passing the productId as a query parameter
+    window.location.href = `pages/PaymentandAcounting.php?product_id=${productId}`;
+}
         function displayCart() {
             const cartContainer = document.getElementById('cartContainer');
             let cartHTML = '<h3>Cart</h3>';
