@@ -30,7 +30,7 @@
                     <label for="cauldron-cvv" style="font-weight: bold; color: #0e0e0e;"> Magic Value (CVV)</label>
                     <input type="text" id="cauldron-cvv" class="form-control" style="width: 100%;" placeholder=" Magic verification Number">
                 </div>
-                <a href="Logistics.html" class="btn btn-danger btn-block">Pay Now</a>
+                <a href="Logistics.php" class="btn btn-danger btn-block">Pay Now</a>
             </form>
         </div>
     </div>
