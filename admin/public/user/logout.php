@@ -9,6 +9,6 @@ $_SESSION = array();
 session_destroy();
  
 // Redirect to login page
-header("Location: /olemberio-it28a/admin/index.php");
+header("Location: /olemberio-pdo-crud/admin/index.php");
 exit;
 ?>
