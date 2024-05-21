@@ -7,36 +7,72 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- Font Awesome CSS -->
     <style>
-        /* Define a class for the grid */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .navbar {
+            margin-bottom: 20px;
+        }
         .card-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive grid with minimum item width of 250px */
-            gap: 20px; /* Gap between grid items */
-            padding: 20px; /* Add padding around the grid container */
-            width: 80%; /* Set width to 80% */
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            margin: 0 auto;
+            width: 80%;
         }
-
-
-        /* Style for individual cards */
         .card {
-            width: 100%; /* Ensure cards take full width of their container */
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
         }
-
-        .card-img-top{
-            width: 100%; /* Ensure the image fills its container */
-            height: auto; /* Maintain aspect ratio */
-            object-fit: cover; /* Ensure the image covers the entire container */
+        .card:hover {
+            transform: scale(1.05);
         }
-        /* Style for the cart */
+        .card-img-top {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .card-body {
+            text-align: center;
+        }
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .card-text {
+            font-size: 0.9rem;
+            color: #555;
+        }
+        .btn-success, .btn-primary {
+            width: 100%;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
         #cartContainer {
             position: fixed;
             top: 4em;
             right: 20px;
             background-color: #fff;
             border: 1px solid #ddd;
-            padding: 10px;
+            padding: 20px;
             box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
             z-index: 999;
+            border-radius: 10px;
+            width: 300px;
+        }
+        #cartContainer h3 {
+            margin-bottom: 15px;
+        }
+        #cartContainer p {
+            margin: 5px 0;
         }
     </style>
 </head>
@@ -71,70 +107,53 @@
         fetch('./products/products-api.php')
             .then(response => response.json())
             .then(data => {
-                const booksContainer = document.getElementById('productsDisplay');
+                const productsContainer = document.getElementById('productsDisplay');
                 data.forEach(product => {
                     const cardHTML = `
-                    
-
-                    <div class="card" style="width: 18rem;">
-                        <img class="card-img-top" src="${product.img}">
-                            <div class="card-body">
-                                <h5 class="card-title">${product.title}</h5><br>Price: ₱${product.rrp}<br>
-                                <p class="card-text">${product.description}.</p>
-                                <p class="card-text"<br>Quantity: ${product.quantity}</p>
-                                 <button class="btn btn-success" onclick="addToCart(${product.id})">
-                                    <i class="fas fa-cart-plus"></i> <!-- Add to Cart icon -->
-                                Add to Cart
+                    <div class="card">
+                        <img class="card-img-top" src="${product.img}" alt="${product.title}">
+                        <div class="card-body">
+                            <h5 class="card-title">${product.title}</h5>
+                            <p class="card-text">${product.description}</p>
+                            <p class="card-text">Price: ₱${product.rrp}</p>
+                            <p class="card-text">Quantity: ${product.quantity}</p>
+                            <button class="btn btn-success" onclick="addToCart(${product.id})">
+                                <i class="fas fa-cart-plus"></i> Add to Cart
                             </button>
-                            </div>
+                            <button class="btn btn-primary" onclick="purchase(${product.id})">
+                                <i class="fas fa-money-bill-wave"></i> Purchase
+                            </button>
+                        </div>
                     </div>
-
                     `;
-                    booksContainer.innerHTML += cardHTML;
+                    productsContainer.innerHTML += cardHTML;
                 });
             })
             .catch(error => console.error('Error:', error));
 
-        // Function to add a product to the cart
+        let cart = {};
+
         function addToCart(productId) {
-            // Here, you can implement your logic to add the product with the given ID to the cart
-            console.log(`Product with ID ${productId} added to cart`);
-            // For example, you can send an AJAX request to your server to update the cart
+            if (cart[productId]) {
+                cart[productId]++;
+            } else {
+                cart[productId] = 1;
+            }
+            displayCart();
         }
 
-        // Function to display the cart with the items added and deduct the values from the quantity data field
+        function purchase(productId) {
+            alert(`Product with ID ${productId} purchased!`);
+        }
+
         function displayCart() {
-            // Here, you can implement the logic to display the cart with the items added and update the quantity data field
-        }
-
-        // Initialize cart object
-    let cart = {};
-
-    // Function to add a product to the cart
-    function addToCart(productId) {
-        // Add the product to the cart
-        if (cart[productId]) {
-            cart[productId]++;
-        } else {
-            cart[productId] = 1;
-        }
-        // Display the updated cart
-        displayCart();
-    }
-
-    // Function to display the cart with the items added and deduct the values from the quantity data field
-    function displayCart() {
-        const cartContainer = document.getElementById('cartContainer');
+            const cartContainer = document.getElementById('cartContainer');
             let cartHTML = '<h3>Cart</h3>';
-            // Iterate over the cart items and display them
             for (const [productId, quantity] of Object.entries(cart)) {
                 cartHTML += `<p>Product ID: ${productId}, Quantity: ${quantity}</p>`;
-                // Here, you can update the quantity data field for the corresponding product
             }
-            // Update the cart display
             cartContainer.innerHTML = cartHTML;
-    }
-
+        }
     </script>
 </body>
 </html>
