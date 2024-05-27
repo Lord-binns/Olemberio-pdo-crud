@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Products List</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -98,7 +98,6 @@
     </div>
 </nav>
 <body>
-
     <div id="productsDisplay" class="card-grid"></div>
     <!-- Cart Display Area -->
     <div id="cartContainer"></div>
@@ -120,7 +119,7 @@
                             <button class="btn btn-success" onclick="addToCart(${product.id})">
                                 <i class="fas fa-cart-plus"></i> Add to Cart
                             </button>
-                            <button class="btn btn-primary" onclick="purchase(${product.id})">
+                            <button class="btn btn-primary" onclick='purchase(${JSON.stringify(product)})'>
                                 <i class="fas fa-money-bill-wave"></i> Purchase
                             </button>
                         </div>
@@ -142,10 +141,30 @@
             displayCart();
         }
 
-        function purchase(productId) {
-    // Redirect to the purchase page, passing the productId as a query parameter
-    window.location.href = `pages/PaymentandAcounting.php?product_id=${productId}`;
-}
+        function purchase(product) {
+            const { id, title, rrp } = product;
+            fetch('pages/insert_purchase.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    product_id: id,
+                    product_name: title,
+                    amount: rrp
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = `pages/PaymentandAcounting.php?payment_id=${data.payment_id}`;
+                } else {
+                    alert('Failed to initiate payment. Please try again.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
         function displayCart() {
             const cartContainer = document.getElementById('cartContainer');
             let cartHTML = '<h3>Cart</h3>';
