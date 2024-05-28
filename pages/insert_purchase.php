@@ -27,14 +27,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 throw new Exception('Invalid input data');
             }
 
-            $stmt = $pdo->prepare("INSERT INTO payments (products_id, user_id, product_name, amount, quantity, created_at) 
-                                   VALUES (:products_id, :user_id, :product_name, :amount, :quantity, current_timestamp())");
+            $stmt = $pdo->prepare("INSERT INTO payments (products_id, payment_item_name, payment_price, payment_quantity, created_at, user_id) 
+                                   VALUES (:products_id, :product_name, :amount, :quantity, current_timestamp(), :user_id)");
 
             $stmt->bindParam(':products_id', $products_id, PDO::PARAM_INT);
-            $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
             $stmt->bindParam(':product_name', $product_name, PDO::PARAM_STR);
             $stmt->bindParam(':amount', $amount, PDO::PARAM_STR);
             $stmt->bindParam(':quantity', $quantity, PDO::PARAM_INT);
+            $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
 
             if (!$stmt->execute()) {
                 throw new Exception('Failed to insert payment into database');
