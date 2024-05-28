@@ -137,28 +137,24 @@
         }
 
         function purchase() {
-    const cartItems = Object.values(cart);
-    fetch('pages/insert_purchase.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(cartItems)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            window.location.href = `pages/PaymentandAcounting.php?payment_id=${data.payment_id}`;
-        } else {
-            console.error('Error:', data.message);
-            alert('Failed to initiate payment. Please try again.');
+            const cartItems = Object.values(cart);
+            fetch('pages/insert_purchase.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(cartItems)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = `pages/PaymentandAcounting.php?payment_id=${data.payment_id}`;
+                } else {
+                    alert('Failed to initiate payment. Please try again.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred. Please try again.');
-    });
-}
 
         function displayCart() {
             const cartContainer = document.getElementById('cartContainer');

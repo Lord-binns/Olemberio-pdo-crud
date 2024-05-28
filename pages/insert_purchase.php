@@ -4,15 +4,10 @@ session_start();
 
 header('Content-Type: application/json');
 
-// Enable error logging
-ini_set('log_errors', 1);
-ini_set('error_log', '/path/to/php-error.log'); // Make sure this path is writable by the web server
-error_reporting(E_ALL);
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         $input = json_decode(file_get_contents('php://input'), true);
-        
+
         // Ensure input is an array of products
         if (!is_array($input)) {
             throw new Exception('Invalid input format');
@@ -51,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo json_encode(['success' => true, 'payment_id' => $pdo->lastInsertId()]);
     } catch (Exception $e) {
         $pdo->rollBack();
-        error_log($e->getMessage()); // Log the error message
+        error_log("Error: " . $e->getMessage());
         echo json_encode(['success' => false, 'message' => $e->getMessage()]);
     }
 } else {
