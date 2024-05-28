@@ -6,14 +6,14 @@ require_once   "../../db/config.php";
 $title = $description = $price = $rrp = $quantity = $img = "";
 $title_err = $description_err = $price_err = $rrp_err = $quantity_err = $img_err = "";
    // Prepare a select statement
-   $sql = "SELECT * FROM products WHERE id = :id";
+   $sql = "SELECT * FROM products WHERE products_id = :products_id";
     
    if($stmt = $pdo->prepare($sql)){
        // Bind variables to the prepared statement as parameters
-       $stmt->bindParam(":id", $param_id);
+       $stmt->bindParam(":products_id", $param_id);
        
        // Set parameters
-       $param_id = trim($_GET["id"]);
+       $param_id = trim($_GET["products_id"]);
        
        // Attempt to execute the prepared statement
        if($stmt->execute()){

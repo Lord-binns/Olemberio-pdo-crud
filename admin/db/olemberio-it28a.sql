@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 27, 2024 at 07:14 AM
+-- Generation Time: May 27, 2024 at 11:40 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -32,16 +32,8 @@ CREATE TABLE `address` (
   `city` varchar(50) NOT NULL,
   `street` varchar(100) NOT NULL,
   `house_number` varchar(10) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `payments_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `address`
---
-
-INSERT INTO `address` (`id`, `city`, `street`, `house_number`, `created_at`) VALUES
-(1, 'Manolo Fortich', 'walay street', '9000', '2024-05-27 05:11:35'),
-(2, 'Manolo Fortich', 'walay street', '9000', '2024-05-27 05:12:02');
 
 -- --------------------------------------------------------
 
@@ -52,8 +44,10 @@ INSERT INTO `address` (`id`, `city`, `street`, `house_number`, `created_at`) VAL
 CREATE TABLE `payments` (
   `payment_id` int(11) NOT NULL,
   `payment_item_name` varchar(200) NOT NULL,
-  `payment_price` text NOT NULL,
-  `payment_quntity` decimal(10,0) NOT NULL
+  `payment_price` decimal(10,2) NOT NULL,
+  `payment_quantity` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `products_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- --------------------------------------------------------
@@ -63,14 +57,15 @@ CREATE TABLE `payments` (
 --
 
 CREATE TABLE `products` (
-  `id` int(11) NOT NULL,
+  `products_id` int(11) NOT NULL,
   `title` varchar(200) NOT NULL,
   `description` text NOT NULL,
   `price` decimal(10,0) NOT NULL,
   `rrp` decimal(10,0) NOT NULL DEFAULT 0,
   `quantity` int(11) NOT NULL,
   `img` text NOT NULL,
-  `date_added` datetime NOT NULL DEFAULT current_timestamp()
+  `date_added` datetime NOT NULL DEFAULT current_timestamp(),
+  `users_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
@@ -90,27 +85,11 @@ INSERT INTO `products` (`id`, `title`, `description`, `price`, `rrp`, `quantity`
 -- --------------------------------------------------------
 
 --
--- Table structure for table `purchases`
---
-
-CREATE TABLE `purchases` (
-  `id` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `description` text NOT NULL,
-  `price` decimal(10,2) NOT NULL,
-  `quantity` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
+  `users_id` int(11) NOT NULL,
   `username` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
   `created_at` datetime DEFAULT current_timestamp()
@@ -120,10 +99,11 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `password`, `created_at`) VALUES
+INSERT INTO `users` (`users_id`, `username`, `password`, `created_at`) VALUES
 (1, 'admin', '$2y$10$kGp4g1TjBK4XwLIwRbBHSeZ4W5FpPbYoB1ap5NfFUjUPAcE3KR5QG', '2024-04-29 16:39:58'),
-(0, 'admin11', '$2y$10$Cxdi/T5.v2k1EZabtcxNI.U1e5qNQ8/Vj1HbxU5a9iNiWwAaDt6Ci', '2024-05-21 19:24:39'),
-(0, 'admin111', '$2y$10$z3ho3hjJqLdFl7KsL9RcWO4SEmlTI6OTkOvFlmnoPWitfVWQug.aS', '2024-05-21 19:26:09');
+(2, 'admin11', '$2y$10$Cxdi/T5.v2k1EZabtcxNI.U1e5qNQ8/Vj1HbxU5a9iNiWwAaDt6Ci', '2024-05-21 19:24:39'),
+(3, 'admin111', '$2y$10$z3ho3hjJqLdFl7KsL9RcWO4SEmlTI6OTkOvFlmnoPWitfVWQug.aS', '2024-05-21 19:26:09'),
+(4, 'imvince', '$2y$10$WwTbjwlTZelNHw/tGAjpI.Gkg.B.bOX64QJ16fzBnmk9NsifULHIK', '2024-05-27 16:21:29');
 
 --
 -- Indexes for dumped tables
@@ -133,19 +113,28 @@ INSERT INTO `users` (`id`, `username`, `password`, `created_at`) VALUES
 -- Indexes for table `address`
 --
 ALTER TABLE `address`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `payments_id` (`payments_id`);
+
+--
+-- Indexes for table `payments`
+--
+ALTER TABLE `payments`
+  ADD PRIMARY KEY (`payment_id`),
+  ADD KEY `products_id` (`products_id`);
 
 --
 -- Indexes for table `products`
 --
 ALTER TABLE `products`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`products_id`),
+  ADD KEY `test` (`users_id`);
 
 --
--- Indexes for table `purchases`
+-- Indexes for table `users`
 --
-ALTER TABLE `purchases`
-  ADD PRIMARY KEY (`id`);
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`users_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -155,19 +144,47 @@ ALTER TABLE `purchases`
 -- AUTO_INCREMENT for table `address`
 --
 ALTER TABLE `address`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `payments`
+--
+ALTER TABLE `payments`
+  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `products_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT for table `purchases`
+-- AUTO_INCREMENT for table `users`
 --
-ALTER TABLE `purchases`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `users`
+  MODIFY `users_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `address`
+--
+ALTER TABLE `address`
+  ADD CONSTRAINT `address_ibfk_1` FOREIGN KEY (`payments_id`) REFERENCES `payments` (`payment_id`);
+
+--
+-- Constraints for table `payments`
+--
+ALTER TABLE `payments`
+  ADD CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`products_id`) REFERENCES `products` (`products_id`);
+
+--
+-- Constraints for table `products`
+--
+ALTER TABLE `products`
+  ADD CONSTRAINT `test` FOREIGN KEY (`users_id`) REFERENCES `users` (`users_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

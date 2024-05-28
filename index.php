@@ -51,7 +51,7 @@
             font-size: 0.9rem;
             color: #555;
         }
-        .btn-success, .btn-primary {
+        .btn-success {
             width: 100%;
             margin-top: 10px;
             border-radius: 5px;
@@ -76,30 +76,28 @@
         }
     </style>
 </head>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">
-        <img src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt="">
-        Bootstrap
-    </a>
-  
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
-      </ul>
-      <form class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-      </form>
-    </div>
-</nav>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">
+            <img src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+            Bootstrap
+        </a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
     <div id="productsDisplay" class="card-grid"></div>
-    <!-- Cart Display Area -->
     <div id="cartContainer"></div>
 
     <script>
@@ -116,11 +114,8 @@
                             <p class="card-text">${product.description}</p>
                             <p class="card-text">Price: ₱${product.rrp}</p>
                             <p class="card-text">Quantity: ${product.quantity}</p>
-                            <button class="btn btn-success" onclick="addToCart(${product.id})">
+                            <button class="btn btn-success" onclick='addToCart(${JSON.stringify(product)})'>
                                 <i class="fas fa-cart-plus"></i> Add to Cart
-                            </button>
-                            <button class="btn btn-primary" onclick='purchase(${JSON.stringify(product)})'>
-                                <i class="fas fa-money-bill-wave"></i> Purchase
                             </button>
                         </div>
                     </div>
@@ -132,27 +127,23 @@
 
         let cart = {};
 
-        function addToCart(productId) {
-            if (cart[productId]) {
-                cart[productId]++;
+        function addToCart(product) {
+            if (cart[product.id]) {
+                cart[product.id].quantity++;
             } else {
-                cart[productId] = 1;
+                cart[product.id] = { ...product, quantity: 1 };
             }
             displayCart();
         }
 
-        function purchase(product) {
-            const { id, title, rrp } = product;
+        function purchase() {
+            const cartItems = Object.values(cart);
             fetch('pages/insert_purchase.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    product_id: id,
-                    product_name: title,
-                    amount: rrp
-                })
+                body: JSON.stringify(cartItems)
             })
             .then(response => response.json())
             .then(data => {
@@ -168,9 +159,13 @@
         function displayCart() {
             const cartContainer = document.getElementById('cartContainer');
             let cartHTML = '<h3>Cart</h3>';
-            for (const [productId, quantity] of Object.entries(cart)) {
-                cartHTML += `<p>Product ID: ${productId}, Quantity: ${quantity}</p>`;
+            let totalAmount = 0;
+            for (const product of Object.values(cart)) {
+                cartHTML += `<p>${product.title}: ${product.quantity} x ₱${product.rrp} = ₱${product.quantity * product.rrp}</p>`;
+                totalAmount += product.quantity * product.rrp;
             }
+            cartHTML += `<p>Total: ₱${totalAmount}</p>`;
+            cartHTML += `<button class="btn btn-primary" onclick="purchase()"><i class="fas fa-money-bill-wave"></i> Purchase</button>`;
             cartContainer.innerHTML = cartHTML;
         }
     </script>
