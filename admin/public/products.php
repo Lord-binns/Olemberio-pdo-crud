@@ -134,7 +134,7 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                                 // Define the row template
                                 $rowTemplate = '
                                     <tr>
-                                        <td>{{id}}</td>
+                                        <td>{{products_id}}</td>
                                         <td>{{title}}</td>
                                         <td>{{description}}</td>
                                         <td>{{price}}</td>
@@ -143,9 +143,9 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
                                         <td><img src="{{img}}" alt="Product Image"></td>
                                         <td>{{date_added}}</td>
                                         <td>
-                                            <a href="./inventory/read.php?id={{id}}" class="mr-3" title="View Record" data-toggle="tooltip"><span class="fa fa-eye"></span></a>
-                                            <a href="./inventory/update.php?id={{id}}" class="mr-3" title="Update Record" data-toggle="tooltip"><span class="fa fa-pencil"></span></a>
-                                            <a href="./inventory/delete.php?id={{id}}" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>
+                                            <a href="./inventory/read.php?products_id={{products_id}}" class="mr-3" title="View Record" data-toggle="tooltip"><span class="fa fa-eye"></span></a>
+                                            <a href="./inventory/update.php?products_id={{products_id}}" class="mr-3" title="Update Record" data-toggle="tooltip"><span class="fa fa-pencil"></span></a>
+                                            <a href="./inventory/delete.php?products_id={{products_id}}" title="Delete Record" data-toggle="tooltip"><span class="fa fa-trash"></span></a>
                                         </td>
                                     </tr>
                                 ';
