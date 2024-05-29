@@ -1,26 +1,25 @@
 <?php
 // Check existence of id parameter before processing further
-if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
+if (isset($_GET["products_id"]) && !empty(trim($_GET["products_id"]))) {
     // Include config file
-    require_once   "../../db/config.php";
+    require_once "../../db/config.php";
 
-    
     // Prepare a select statement
-    $sql = "SELECT * FROM products WHERE id = :id";
-    
-    if($stmt = $pdo->prepare($sql)){
+    $sql = "SELECT * FROM products WHERE products_id = :products_id";
+
+    if ($stmt = $pdo->prepare($sql)) {
         // Bind variables to the prepared statement as parameters
-        $stmt->bindParam(":id", $param_id);
-        
+        $stmt->bindParam(":products_id", $param_products_id);
+
         // Set parameters
-        $param_id = trim($_GET["id"]);
-        
+        $param_products_id = trim($_GET["products_id"]);
+
         // Attempt to execute the prepared statement
-        if($stmt->execute()){
-            if($stmt->rowCount() == 1){
+        if ($stmt->execute()) {
+            if ($stmt->rowCount() == 1) {
                 // Fetch result row as an associative array
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
-                
+
                 // Retrieve individual field values
                 $product_name = $row["title"];
                 $product_details = $row["description"];
@@ -29,23 +28,22 @@ if(isset($_GET["id"]) && !empty(trim($_GET["id"]))){
                 $product_quantity = $row["quantity"];
                 $product_img = $row["img"];
                 $date_added = $row["date_added"];
-            } else{
+            } else {
                 // URL doesn't contain valid id parameter. Redirect to error page
-                header("location: ../public/error.php");
+                header("location: ../error.php");
                 exit();
             }
-            
-        } else{
+        } else {
             echo "Oops! Something went wrong. Please try again later.";
         }
     }
-     
+
     // Close statement
     unset($stmt);
-    
+
     // Close connection
     unset($pdo);
-} else{
+} else {
     // URL doesn't contain id parameter. Redirect to error page
     header("location: ../public/error.php");
     exit();
