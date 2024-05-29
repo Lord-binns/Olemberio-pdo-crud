@@ -1,5 +1,5 @@
 <?php
-require_once('config.php');
+require_once('../pages/config.php');
 session_start();
 
 // Check if user_id is set in session
@@ -10,8 +10,8 @@ if (!isset($_SESSION['user_id'])) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     try {
         // Check if required POST parameters are set
-        if (!isset($_POST['purchase_id'])) {
-            throw new Exception('Purchase ID not found in POST data.');
+        if (!isset($_POST['payment_id'])) {
+            throw new Exception('payment ID not found in POST data.');
         }
         if (!isset($_POST['product_name'])) {
             throw new Exception('Product name not found in POST data.');
