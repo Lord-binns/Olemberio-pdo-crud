@@ -57,9 +57,32 @@ if (isset($_GET["products_id"]) && !empty(trim($_GET["products_id"]))) {
     <title>View Record</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        .wrapper{
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .wrapper {
             width: 600px;
             margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group p {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            word-wrap: break-word;  
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+        .btn-primary, .btn-secondary {
+            padding: 10px 20px;
+        }
+        h1 {
+            color: #343a40;
         }
     </style>
 </head>
