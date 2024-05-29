@@ -44,36 +44,42 @@ if (isset($_GET['payment_id'])) {
         .form-control:focus, .form-select:focus { border-color: #00796b; box-shadow: none; }
         .btn-primary { width: 100%; padding: 12px; background-color: #00796b; border: none; border-radius: 10px; color: #fff; cursor: pointer; transition: background-color 0.3s ease; }
         .btn-primary:hover { background-color: #004d40; }
-        .alert { display: none; margin-top: 20px; }
+        .alert { margin-top: 20px; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Payment Form</h1>
-        <form id="paymentForm">
-            <div class="mb-3">
-                <label for="product_name" class="form-label">Product Name</label>
-                <input type="text" class="form-control" id="product_name" name="product_name" value="<?php echo htmlspecialchars($product_name); ?>" readonly>
+        <?php if (isset($error_message)): ?>
+            <div class="alert alert-danger" role="alert">
+                <?php echo htmlspecialchars($error_message); ?>
             </div>
-            <div class="mb-3">
-                <label for="amount" class="form-label">Amount</label>
-                <input type="text" class="form-control" id="amount" name="amount" value="<?php echo htmlspecialchars($amount); ?>" readonly>
+        <?php else: ?>
+            <form id="paymentForm">
+                <div class="mb-3">
+                    <label for="product_name" class="form-label">Product Name</label>
+                    <input type="text" class="form-control" id="product_name" name="product_name" value="<?php echo htmlspecialchars($product_name); ?>" readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="amount" class="form-label">Amount</label>
+                    <input type="text" class="form-control" id="amount" name="amount" value="<?php echo htmlspecialchars($amount); ?>" readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="payment_method" class="form-label">Payment Method</label>
+                    <select class="form-select" id="payment_method" name="payment_method">
+                        <option value="GCash">GCash</option>
+                        <option value="PayMaya">PayMaya</option>
+                        <option value="PayPal">PayPal</option>
+                        <option value="Credit Card">Credit Card</option>
+                    </select>
+                </div>
+                <input type="hidden" name="purchase_id" value="<?php echo htmlspecialchars($payment_id); ?>">
+                <button type="submit" class="btn btn-primary">Submit Payment</button>
+            </form>
+            <div id="successMessage" class="alert alert-success" role="alert" style="display:none;">
+                Payment Successful! Redirecting...
             </div>
-            <div class="mb-3">
-                <label for="payment_method" class="form-label">Payment Method</label>
-                <select class="form-select" id="payment_method" name="payment_method">
-                    <option value="GCash">GCash</option>
-                    <option value="PayMaya">PayMaya</option>
-                    <option value="PayPal">PayPal</option>
-                    <option value="Credit Card">Credit Card</option>
-                </select>
-            </div>
-            <input type="hidden" name="purchase_id" value="<?php echo htmlspecialchars($payment_id); ?>">
-            <button type="submit" class="btn btn-primary">Submit Payment</button>
-        </form>
-        <div id="successMessage" class="alert alert-success" role="alert">
-            Payment Successful! Redirecting...
-        </div>
+        <?php endif; ?>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
