@@ -1,18 +1,18 @@
 <?php
 // Process delete operation after confirmation
-if(isset($_POST["id"]) && !empty($_POST["id"])){
+if(isset($_POST["products_id"]) && !empty($_POST["products_id"])){
     // Include config file
     require_once  "../../db/config.php";
     
     // Prepare a delete statement
-    $sql = "DELETE FROM products WHERE id = :id";
+    $sql = "DELETE FROM products WHERE products_id = :products_id";
     
     if($stmt = $pdo->prepare($sql)){
         // Bind variables to the prepared statement as parameters
-        $stmt->bindParam(":id", $param_id);
+        $stmt->bindParam(":products_id", $param_products_id);
         
         // Set parameters
-        $param_id = trim($_POST["id"]);
+        $param_id = trim($_POST["products_id"]);
         
         // Attempt to execute the prepared statement
         if($stmt->execute()){
@@ -31,9 +31,9 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
     unset($pdo);
 } else{
     // Check existence of id parameter
-    if(empty(trim($_GET["id"]))){
+    if(empty(trim($_GET["products_id"]))){
         // URL doesn't contain id parameter. Redirect to error page
-        header("location: ../public/error.php");
+        header("location: ../error.php");
         exit();
     }
 }
@@ -60,11 +60,11 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                     <h2 class="mt-5 mb-3">Delete Record</h2>
                     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                         <div class="alert alert-danger">
-                            <input type="hidden" name="id" value="<?php echo trim($_GET["id"]); ?>"/>
+                            <input type="hidden" name="products_id" value="<?php echo trim($_GET["products_id"]); ?>"/>
                             <p>Are you sure you want to delete this record?</p>
                             <p>
                                 <input type="submit" value="Yes" class="btn btn-danger">
-                                <a href="../index.php" class="btn btn-secondary ml-2">No</a>
+                                <a href="../../public/products.php" class="btn btn-secondary ml-2">No</a>
                             </p>
                         </div>
                     </form>
