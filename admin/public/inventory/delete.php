@@ -1,25 +1,25 @@
 <?php
 // Process delete operation after confirmation
-if(isset($_POST["products_id"]) && !empty($_POST["products_id"])){
+if (isset($_POST["products_id"]) && !empty($_POST["products_id"])) {
     // Include config file
-    require_once  "../../db/config.php";
+    require_once "../../db/config.php";
     
     // Prepare a delete statement
     $sql = "DELETE FROM products WHERE products_id = :products_id";
     
-    if($stmt = $pdo->prepare($sql)){
+    if ($stmt = $pdo->prepare($sql)) {
         // Bind variables to the prepared statement as parameters
-        $stmt->bindParam(":products_id", $param_products_id);
+        $stmt->bindParam(":products_id", $param_products_id, PDO::PARAM_INT);
         
         // Set parameters
-        $param_id = trim($_POST["products_id"]);
+        $param_products_id = trim($_POST["products_id"]);
         
         // Attempt to execute the prepared statement
-        if($stmt->execute()){
+        if ($stmt->execute()) {
             // Records deleted successfully. Redirect to landing page
             header("location: ../products.php");
             exit();
-        } else{
+        } else {
             echo "Oops! Something went wrong. Please try again later.";
         }
     }
@@ -29,9 +29,9 @@ if(isset($_POST["products_id"]) && !empty($_POST["products_id"])){
     
     // Close connection
     unset($pdo);
-} else{
+} else {
     // Check existence of id parameter
-    if(empty(trim($_GET["products_id"]))){
+    if (empty(trim($_GET["products_id"]))) {
         // URL doesn't contain id parameter. Redirect to error page
         header("location: ../error.php");
         exit();
@@ -46,7 +46,7 @@ if(isset($_POST["products_id"]) && !empty($_POST["products_id"])){
     <title>Delete Record</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        .wrapper{
+        .wrapper {
             width: 600px;
             margin: 0 auto;
         }

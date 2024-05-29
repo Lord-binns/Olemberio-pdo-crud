@@ -1,25 +1,56 @@
 <?php
-require_once('config.php');
+require_once('../pages/config.php');
 session_start();
 
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Function to validate and sanitize payment ID
+function validate_payment_id($payment_id) {
+    return filter_var($payment_id, FILTER_VALIDATE_INT, ["options" => ["min_range" => 1]]);
+}
+
 if (isset($_GET['payment_id'])) {
-    $payment_id = $_GET['payment_id'];
+    $raw_payment_id = $_GET['payment_id'];
 
-    try {
-        $stmt = $pdo->prepare("SELECT * FROM payments WHERE payment_id = :payment_id");
-        $stmt->bindParam(':payment_id', $payment_id, PDO::PARAM_INT);
-        $stmt->execute();
-        $purchase = $stmt->fetch(PDO::FETCH_ASSOC);
+    // Debug: Print the raw payment ID
+    echo "Raw Payment ID: " . htmlspecialchars($raw_payment_id) . "<br>";
 
-        if ($purchase) {
-            $product_name = $purchase['payment_item_name'];
-            $amount = $purchase['payment_price'];
-            $quantity = $purchase['payment_quantity'];
-        } else {
-            $error_message = "Purchase not found. Please check your payment ID.";
+    // Validate and sanitize the payment ID
+    $payment_id = validate_payment_id($raw_payment_id);
+
+    if ($payment_id) {
+        // Debug: Print the validated payment ID
+        echo "Validated Payment ID: " . htmlspecialchars($payment_id) . "<br>";
+
+        try {
+            // Ensure $pdo is defined and connected properly
+            if (!isset($pdo)) {
+                throw new Exception("Database connection not initialized.");
+            }
+
+            // Prepare and execute the SQL query
+            $stmt = $pdo->prepare("SELECT * FROM payments WHERE payment_id = :payment_id");
+            $stmt->bindParam(':payment_id', $payment_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $purchase = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($purchase) {
+                // Retrieve payment details
+                $product_name = $purchase['payment_item_name'];
+                $amount = $purchase['payment_price'];
+                $quantity = $purchase['payment_quantity'];
+            } else {
+                $error_message = "Purchase not found. Please check your payment ID.";
+            }
+        } catch (PDOException $e) {
+            $error_message = "Database error: " . $e->getMessage();
+        } catch (Exception $e) {
+            $error_message = "Error: " . $e->getMessage();
         }
-    } catch (PDOException $e) {
-        $error_message = "Error: " . $e->getMessage();
+    } else {
+        $error_message = "Invalid payment ID. Please provide a valid payment ID.";
     }
 } else {
     $error_message = "Invalid request. Payment ID is missing.";
