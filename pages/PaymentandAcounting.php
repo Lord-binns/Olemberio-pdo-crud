@@ -16,16 +16,13 @@ if (isset($_GET['payment_id'])) {
             $amount = $purchase['payment_price'];
             $quantity = $purchase['payment_quantity'];
         } else {
-            echo "Purchase not found.";
-            exit();
+            $error_message = "Purchase not found. Please check your payment ID.";
         }
     } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
-        exit();
+        $error_message = "Error: " . $e->getMessage();
     }
 } else {
-    echo "Invalid request.";
-    exit();
+    $error_message = "Invalid request. Payment ID is missing.";
 }
 ?>
 
