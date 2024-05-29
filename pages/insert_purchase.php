@@ -1,55 +1,48 @@
 <?php
+// Enable error reporting
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require_once('../pages/config.php');
 session_start();
 
-header('Content-Type: application/json');
+$response = array('success' => false, 'payment_id' => null, 'message' => '');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    try {
-        $input = json_decode(file_get_contents('php://input'), true);
+try {
+    $input = file_get_contents('php://input');
+    $cartItems = json_decode($input, true);
 
-        // Ensure input is an array of products
-        if (!is_array($input)) {
-            throw new Exception('Invalid input format');
-        }
-
-        // Begin transaction
-        $pdo->beginTransaction();
-
-        foreach ($input as $item) {
-            $products_id = $item['id'] ?? null;
-            $product_name = $item['title'] ?? null;
-            $amount = $item['rrp'] ?? null;
-            $quantity = $item['quantity'] ?? 1;
-            $user_id = $_SESSION['user_id'] ?? 1; // Replace with actual user ID logic
-
-            if (!$products_id || !$product_name || !$amount) {
-                throw new Exception('Invalid input data');
-            }
-
-            $stmt = $pdo->prepare("INSERT INTO payments (products_id, payment_item_name, payment_price, payment_quantity, created_at, user_id) 
-                                   VALUES (:products_id, :product_name, :amount, :quantity, current_timestamp(), :user_id)");
-
-            $stmt->bindParam(':products_id', $products_id, PDO::PARAM_INT);
-            $stmt->bindParam(':product_name', $product_name, PDO::PARAM_STR);
-            $stmt->bindParam(':amount', $amount, PDO::PARAM_STR);
-            $stmt->bindParam(':quantity', $quantity, PDO::PARAM_INT);
-            $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-
-            if (!$stmt->execute()) {
-                throw new Exception('Failed to insert payment into database');
-            }
-        }
-
-        // Commit transaction
-        $pdo->commit();
-        echo json_encode(['success' => true, 'payment_id' => $pdo->lastInsertId()]);
-    } catch (Exception $e) {
-        $pdo->rollBack();
-        error_log("Error: " . $e->getMessage());
-        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    if (json_last_error() !== JSON_ERROR_NONE || !is_array($cartItems)) {
+        throw new Exception('Invalid cart data.');
     }
-} else {
-    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+
+    $pdo->beginTransaction();
+
+    $sql = "INSERT INTO payments (payment_item_name, payment_price, payment_quantity, products_id) VALUES (:itemName, :itemPrice, :itemQuantity, :productId)";
+    $stmt = $pdo->prepare($sql);
+
+    foreach ($cartItems as $item) {
+        $stmt->bindParam(':itemName', $item['title']);
+        $stmt->bindParam(':itemPrice', $item['rrp']);
+        $stmt->bindParam(':itemQuantity', $item['quantity']);
+        $stmt->bindParam(':productId', $item['products_id']);
+        if (!$stmt->execute()) {
+            throw new Exception('Failed to insert cart item.');
+        }
+    }
+
+    $pdo->commit();
+
+    $paymentId = $pdo->lastInsertId();
+
+    $response['success'] = true;
+    $response['payment_id'] = $paymentId;
+} catch (Exception $e) {
+    $pdo->rollBack();
+    $response['message'] = $e->getMessage();
 }
+
+header('Content-Type: application/json');
+echo json_encode($response);
 ?>

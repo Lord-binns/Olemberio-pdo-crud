@@ -7,73 +7,19 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-            padding-top: 20px;
-        }
-        .navbar {
-            margin-bottom: 20px;
-        }
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 20px;
-            margin: 0 auto;
-            width: 80%;
-        }
-        .card {
-            width: 100%;
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
-        }
-        .card:hover {
-            transform: scale(1.05);
-        }
-        .card-img-top {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-        }
-        .card-body {
-            text-align: center;
-        }
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-        .card-text {
-            font-size: 0.9rem;
-            color: #555;
-        }
-        .btn-success {
-            width: 100%;
-            margin-top: 10px;
-            border-radius: 5px;
-        }
-        #cartContainer {
-            position: fixed;
-            top: 4em;
-            right: 20px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            padding: 20px;
-            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-            z-index: 999;
-            border-radius: 10px;
-            width: 300px;
-        }
-        #cartContainer h3 {
-            margin-bottom: 15px;
-        }
-        #cartContainer p {
-            margin: 5px 0;
-        }
+        body { font-family: 'Arial', sans-serif; background-color: #f8f9fa; padding-top: 20px; }
+        .navbar { margin-bottom: 20px; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 20px; margin: 0 auto; width: 80%; }
+        .card { width: 100%; border: none; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); transition: transform 0.2s; }
+        .card:hover { transform: scale(1.05); }
+        .card-img-top { width: 100%; height: 200px; object-fit: cover; border-top-left-radius: 10px; border-top-right-radius: 10px; }
+        .card-body { text-align: center; }
+        .card-title { font-size: 1.2rem; font-weight: bold; }
+        .card-text { font-size: 0.9rem; color: #555; }
+        .btn-success { width: 100%; margin-top: 10px; border-radius: 5px; }
+        #cartContainer { position: fixed; top: 4em; right: 20px; background-color: #fff; border: 1px solid #ddd; padding: 20px; box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); z-index: 999; border-radius: 10px; width: 300px; }
+        #cartContainer h3 { margin-bottom: 15px; }
+        #cartContainer p { margin: 5px 0; }
     </style>
 </head>
 <body>
@@ -128,33 +74,34 @@
         let cart = {};
 
         function addToCart(product) {
-            if (cart[product.id]) {
-                cart[product.id].quantity++;
+            if (cart[product.products_id]) {
+                cart[product.products_id].quantity++;
             } else {
-                cart[product.id] = { ...product, quantity: 1 };
+                cart[product.products_id] = { ...product, quantity: 1 };
             }
             displayCart();
         }
 
         function purchase() {
-            const cartItems = Object.values(cart);
-            fetch('pages/insert_purchase.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(cartItems)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = `pages/PaymentandAcounting.php?payment_id=${data.payment_id}`;
-                } else {
-                    alert('Failed to initiate payment. Please try again.');
-                }
-            })
-            .catch(error => console.error('Error:', error));
+    const cartItems = Object.values(cart);
+    fetch('pages/insert_purchase.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cartItems)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = `pages/PaymentandAcounting.php?payment_id=${data.payment_id}`;
+        } else {
+            alert('Failed to initiate payment. Please try again. ' + data.message);
         }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
 
         function displayCart() {
             const cartContainer = document.getElementById('cartContainer');

@@ -14,6 +14,7 @@ if (isset($_GET['payment_id'])) {
         if ($purchase) {
             $product_name = $purchase['payment_item_name'];
             $amount = $purchase['payment_price'];
+            $quantity = $purchase['payment_quantity'];
         } else {
             echo "Purchase not found.";
             exit();
@@ -37,65 +38,16 @@ if (isset($_GET['payment_id'])) {
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            background-color: #e0f7fa;
-            font-family: 'Nunito', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            max-width: 400px;
-            padding: 30px;
-            background-color: #ffffff;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .container:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #00796b;
-            font-weight: 700;
-        }
-        .form-label {
-            font-weight: 600;
-            color: #004d40;
-        }
-        .form-control, .form-select {
-            border-radius: 10px;
-            border: 1px solid #b2dfdb;
-            padding: 10px;
-            margin-bottom: 15px;
-            transition: border-color 0.3s ease;
-        }
-        .form-control:focus, .form-select:focus {
-            border-color: #00796b;
-            box-shadow: none;
-        }
-        .btn-primary {
-            width: 100%;
-            padding: 12px;
-            background-color: #00796b;
-            border: none;
-            border-radius: 10px;
-            color: #fff;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .btn-primary:hover {
-            background-color: #004d40;
-        }
-        .alert {
-            display: none;
-            margin-top: 20px;
-        }
+        body { background-color: #e0f7fa; font-family: 'Nunito', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { max-width: 400px; padding: 30px; background-color: #ffffff; border-radius: 15px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .container:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); }
+        h1 { text-align: center; margin-bottom: 20px; color: #00796b; font-weight: 700; }
+        .form-label { font-weight: 600; color: #004d40; }
+        .form-control, .form-select { border-radius: 10px; border: 1px solid #b2dfdb; padding: 10px; margin-bottom: 15px; transition: border-color 0.3s ease; }
+        .form-control:focus, .form-select:focus { border-color: #00796b; box-shadow: none; }
+        .btn-primary { width: 100%; padding: 12px; background-color: #00796b; border: none; border-radius: 10px; color: #fff; cursor: pointer; transition: background-color 0.3s ease; }
+        .btn-primary:hover { background-color: #004d40; }
+        .alert { display: none; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -134,7 +86,7 @@ if (isset($_GET['payment_id'])) {
                 $('#successMessage').fadeIn();
                 setTimeout(function() {
                     window.location.href = '../pages/address.php';
-                }, 2000); // Adjust the delay as needed
+                }, 2000);
             });
         });
     </script>

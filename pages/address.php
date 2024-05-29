@@ -3,8 +3,8 @@
 require_once '../pages/config.php';
 
 // Define variables and initialize with empty values
-$city = $street = $house_number = "";
-$city_err = $street_err = $house_number_err = "";
+$city = $street = $house_number = $payments_id = "";
+$city_err = $street_err = $house_number_err = $payments_id_err = "";
 
 // Processing form data when form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -33,16 +33,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $house_number = $input_house_number;
     }
 
+    // Validate payments_id
+    if (isset($_POST["payments_id"]) && !empty(trim($_POST["payments_id"]))) {
+        $payments_id = trim($_POST["payments_id"]);
+    } else {
+        $payments_id_err = "Payment ID is required.";
+    }
+
     // Check input errors before inserting in database
-    if (empty($city_err) && empty($street_err) && empty($house_number_err)) {
+    if (empty($city_err) && empty($street_err) && empty($house_number_err) && empty($payments_id_err)) {
         // Prepare an insert statement
-        $sql = "INSERT INTO address (city, street, house_number) VALUES (:city, :street, :house_number)";
+        $sql = "INSERT INTO address (city, street, house_number, payments_id) VALUES (:city, :street, :house_number, :payments_id)";
 
         if ($stmt = $pdo->prepare($sql)) {
             // Bind variables to the prepared statement as parameters
             $stmt->bindParam(":city", $city);
             $stmt->bindParam(":street", $street);
             $stmt->bindParam(":house_number", $house_number);
+            $stmt->bindParam(":payments_id", $payments_id);
 
             // Attempt to execute the prepared statement
             if ($stmt->execute()) {
@@ -112,6 +120,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h1>Address</h1>
     <p>Please enter your shipping details.</p>
     <form action="address.php" method="post">
+        <!-- Hidden input for payments_id -->
+        <input type="hidden" name="payments_id" value="<?php echo isset($_POST['payments_id']) ? htmlspecialchars($_POST['payments_id']) : ''; ?>">
+
         <div class="form-group">
             <label for="city">City</label>
             <select class="form-control" id="city" name="city">
