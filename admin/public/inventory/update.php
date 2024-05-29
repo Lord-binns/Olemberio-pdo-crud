@@ -19,8 +19,7 @@ if ($stmt = $pdo->prepare($sql)) {
     // Attempt to execute the prepared statement
     if ($stmt->execute()) {
         if ($stmt->rowCount() == 1) {
-            /* Fetch result row as an associative array. Since the result set
-            contains only one row, we don't need to use while loop */
+            // Fetch result row as an associative array. Since the result set contains only one row, we don't need to use while loop
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
             // Retrieve individual field values
@@ -43,11 +42,6 @@ if ($stmt = $pdo->prepare($sql)) {
 // Close statement
 unset($stmt);
 
-// Close connection
-unset($pdo);
-?>
-
-<?php
 // Processing form data when form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate title
