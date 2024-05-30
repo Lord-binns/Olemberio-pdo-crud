@@ -6,8 +6,12 @@ define('DB_USERNAME', 'root');
 define('DB_PASSWORD', '');
 define('DB_NAME', 'olemberio-it28a');
 
- 
-/* Attempt to connect to MySQL database */
+/*
+$host = 'localhost';
+$dbname = 'u593341949_db_serenio';
+$username = 'u593341949_dev_serenio';
+$password = '20212014Serenio';
+*/
 try{
     $pdo = new PDO("mysql:host=" . DB_SERVER . ";dbname=" . DB_NAME, DB_USERNAME, DB_PASSWORD);
     // Set the PDO error mode to exception
