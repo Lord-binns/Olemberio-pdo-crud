@@ -44,7 +44,12 @@
         </div>
     </nav>
     <div id="productsDisplay" class="card-grid"></div>
-    <div id="cartContainer"></div>
+    <div id="cartContainer">
+        <h3>Cart</h3>
+        <div id="cartModalBody"></div>
+        <p id="totalPrice">Total Price: ₱0</p>
+        <button id="buyButton" class="btn btn-success">Purchase</button>
+    </div>
 
     <script>
         fetch('./products/products-api.php')
@@ -53,68 +58,89 @@
                 const productsContainer = document.getElementById('productsDisplay');
                 data.forEach(product => {
                     const cardHTML = `
-                    <div class="card">
-                        <img class="card-img-top" src="${product.img}" alt="${product.title}">
-                        <div class="card-body">
-                            <h5 class="card-title">${product.title}</h5>
-                            <p class="card-text">${product.description}</p>
-                            <p class="card-text">Price: ₱${product.rrp}</p>
-                            <p class="card-text">Quantity: ${product.quantity}</p>
-                            <button class="btn btn-success" onclick='addToCart(${JSON.stringify(product)})'>
-                                <i class="fas fa-cart-plus"></i> Add to Cart
-                            </button>
+                        <div class="card">
+                            <img class="card-img-top" src="${product.img}" alt="${product.title}">
+                            <div class="card-body">
+                                <h5 class="card-title">${product.title}</h5>
+                                <p class="card-text">${product.description}</p>
+                                <p class="card-text">Price: ₱${product.rrp}</p>
+                                <p class="card-text">Quantity: ${product.quantity}</p>
+                                <button class="btn btn-success" onclick="addToCart(${product.products_id}, '${product.title}', ${product.rrp})">
+                                    <i class="fas fa-cart-plus"></i> Add to Cart
+                                </button>
+                            </div>
                         </div>
-                    </div>
                     `;
                     productsContainer.innerHTML += cardHTML;
                 });
             })
             .catch(error => console.error('Error:', error));
 
-        let cart = {};
+        let cart = JSON.parse(localStorage.getItem('cart')) || {};
 
-        function addToCart(product) {
-            if (cart[product.products_id]) {
-                cart[product.products_id].quantity++;
+        function addToCart(products_id, productName, productPrice) {
+            if (cart[products_id]) {
+                cart[products_id].quantity++;
             } else {
-                cart[product.products_id] = { ...product, quantity: 1 };
+                cart[products_id] = { products_id, name: productName, quantity: 1, price: productPrice };
             }
             displayCart();
+            localStorage.setItem('cart', JSON.stringify(cart));
         }
 
-        function purchase() {
-    const cartItems = Object.values(cart);
-    fetch('pages/insert_purchase.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(cartItems)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            window.location.href = `pages/PaymentandAcounting.php?payment_id=${data.payment_id}`;
-        } else {
-            alert('Failed to initiate payment. Please try again. ' + data.message);
+        function removeFromCart(products_id) {
+            if (cart[products_id]) {
+                if (cart[products_id].quantity > 1) {
+                    cart[products_id].quantity--;
+                } else {
+                    delete cart[products_id];
+                }
+            }
+            displayCart();
+            localStorage.setItem('cart', JSON.stringify(cart));
         }
-    })
-    .catch(error => console.error('Error:', error));
-}
 
+        function increaseQuantity(products_id) {
+            if (cart[products_id]) {
+                cart[products_id].quantity++;
+            }
+            displayCart();
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
 
         function displayCart() {
-            const cartContainer = document.getElementById('cartContainer');
-            let cartHTML = '<h3>Cart</h3>';
-            let totalAmount = 0;
-            for (const product of Object.values(cart)) {
-                cartHTML += `<p>${product.title}: ${product.quantity} x ₱${product.rrp} = ₱${product.quantity * product.rrp}</p>`;
-                totalAmount += product.quantity * product.rrp;
+            const cartModalBody = document.getElementById('cartModalBody');
+            const totalPriceElement = document.getElementById('totalPrice');
+            let cartHTML = '';
+            let totalPrice = 0;
+
+            for (const products_id in cart) {
+                const product = cart[products_id];
+                const productTotal = product.quantity * product.price;
+                totalPrice += productTotal;
+                cartHTML += `
+                    <div>
+                        <p>${product.name} - Quantity: ${product.quantity} - Total: ₱${productTotal.toFixed(2)}</p>
+                        <button class="btn btn-danger btn-sm" onclick="removeFromCart(${products_id})">-</button>
+                        <button class="btn btn-secondary btn-sm" onclick="increaseQuantity(${products_id})">+</button>
+                    </div>
+                `;
             }
-            cartHTML += `<p>Total: ₱${totalAmount}</p>`;
-            cartHTML += `<button class="btn btn-primary" onclick="purchase()"><i class="fas fa-money-bill-wave"></i> Purchase</button>`;
-            cartContainer.innerHTML = cartHTML;
+
+            cartModalBody.innerHTML = cartHTML;
+            totalPriceElement.innerHTML = `Total Price: ₱${totalPrice.toFixed(2)}`;
         }
+
+        document.getElementById('buyButton').addEventListener('click', () => {
+            const cart = JSON.parse(localStorage.getItem('cart'));
+            window.location.href = 'pages/PaymentandAcounting.php?cart=' + encodeURIComponent(JSON.stringify(cart));
+        });
+
+        // Display cart on initial load
+        displayCart();
     </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
